@@ -50,10 +50,10 @@ body {
   gap: .55rem;
 }
 .brand-logo {
-  height: 34px; width: 34px; display: block;
+  height: 44px; width: 44px; display: block;
   background: #fff;            /* pastille claire pour rester lisible sur fond sombre */
-  border-radius: 8px;
-  padding: 2px;
+  border-radius: 9px;
+  padding: 1px;                /* marge intérieure minimale : le logo remplit la pastille */
   object-fit: contain;
 }
 .mainnav { display: flex; flex-wrap: wrap; gap: .25rem; }
