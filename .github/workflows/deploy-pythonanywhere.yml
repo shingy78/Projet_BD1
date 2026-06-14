@@ -21,6 +21,7 @@ jobs:
           : "${{ secrets.PA_TOKEN }}"
           : "${{ secrets.PA_TARGET_DIR }}"
           : "${{ secrets.PA_WEBAPP_DOMAIN }}"
+          : "${{ secrets.PASSWORD }}"
 
       - name: Upload all files recursively (dirs auto-created by Files API)
         shell: bash
@@ -46,6 +47,7 @@ jobs:
             case "$rel" in
               .git/*|.github/*|.venv/*|__pycache__/*|node_modules/*) continue ;;
               *.pyc|.DS_Store) continue ;;
+              app_password.txt|.flask_secret|*.db) continue ;;
             esac
 
             remote_path="${TARGET_DIR}/${rel}"
@@ -66,10 +68,45 @@ jobs:
                 -print0
           )
 
+          echo "Files uploaded."
+
+      - name: Upload application password (from GitHub secret PASSWORD)
+        shell: bash
+        env:
+          APP_PASSWORD: ${{ secrets.PASSWORD }}
+        run: |
+          set -euo pipefail
+          USER="${{ secrets.PA_USERNAME }}"
+          TOKEN="${{ secrets.PA_TOKEN }}"
+          TARGET_DIR="${{ secrets.PA_TARGET_DIR }}"
+          HOST="${{ secrets.PA_HOST }}"
+          if [[ -z "${HOST}" ]]; then HOST="www.pythonanywhere.com"; fi
+
+          # Le mot de passe (secret GitHub) est écrit dans un fichier temporaire
+          # — jamais versionné — puis déposé à la racine du code source sur
+          # PythonAnywhere, où l'application le lira au moment de la connexion.
+          printf '%s' "${APP_PASSWORD}" > app_password.txt
+          curl -sS --fail -X POST \
+            -H "Authorization: Token ${TOKEN}" \
+            -F "content=@app_password.txt" \
+            "https://${HOST}/api/v0/user/${USER}/files/path${TARGET_DIR}/app_password.txt" \
+            >/dev/null
+          rm -f app_password.txt
+          echo "Password file uploaded."
+
+      - name: Reload web app
+        shell: bash
+        run: |
+          set -euo pipefail
+          USER="${{ secrets.PA_USERNAME }}"
+          TOKEN="${{ secrets.PA_TOKEN }}"
+          DOMAIN="${{ secrets.PA_WEBAPP_DOMAIN }}"
+          HOST="${{ secrets.PA_HOST }}"
+          if [[ -z "${HOST}" ]]; then HOST="www.pythonanywhere.com"; fi
+
           echo "Reloading webapp ${DOMAIN}..."
           curl -sS --fail -X POST \
             -H "Authorization: Token ${TOKEN}" \
             "https://${HOST}/api/v0/user/${USER}/webapps/${DOMAIN}/reload/" \
             >/dev/null
-
           echo "Deployed. Try: https://${DOMAIN}/"

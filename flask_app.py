@@ -8,6 +8,8 @@ Pile : Flask + SQLite (sans ORM). Pages rendues côté serveur (Jinja2).
 Voir fiche_projet_gestion_freelance_v2.md pour le cahier des charges.
 """
 
+import hmac
+import os
 from datetime import date, timedelta
 
 from flask import (
@@ -16,14 +18,110 @@ from flask import (
     redirect,
     render_template,
     request,
+    session,
     url_for,
 )
 
 import db
 from db import execute, query
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+PASSWORD_FILE = os.path.join(BASE_DIR, "app_password.txt")
+SECRET_KEY_FILE = os.path.join(BASE_DIR, ".flask_secret")
+
 app = Flask(__name__)
-app.secret_key = "dev-secret-key-a-changer-en-production"
+
+
+# -----------------------------------------------------------------------------
+#  Sécurité : accès réservé par mot de passe (outil mono-utilisateur)
+# -----------------------------------------------------------------------------
+
+def _load_secret_key():
+    """Clé de signature des cookies de session.
+
+    Priorité à la variable d'environnement APP_SECRET_KEY ; sinon une clé
+    aléatoire est générée une fois et conservée dans un fichier local (non
+    versionné) pour que les sessions survivent aux redémarrages.
+    """
+    key = os.environ.get("APP_SECRET_KEY")
+    if key:
+        return key
+    if os.path.exists(SECRET_KEY_FILE):
+        with open(SECRET_KEY_FILE, encoding="utf-8") as f:
+            return f.read().strip()
+    key = os.urandom(32).hex()
+    try:
+        with open(SECRET_KEY_FILE, "w", encoding="utf-8") as f:
+            f.write(key)
+    except OSError:
+        pass
+    return key
+
+
+app.secret_key = _load_secret_key()
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,   # cookie inaccessible au JavaScript
+    SESSION_COOKIE_SAMESITE="Lax",  # limite l'envoi cross-site
+)
+
+
+def get_app_password():
+    """Mot de passe d'accès au site.
+
+    Provient de la variable d'environnement APP_PASSWORD ou, à défaut, du
+    fichier app_password.txt déposé par le workflow de déploiement à partir
+    du secret GitHub PASSWORD. Ce fichier n'est jamais versionné.
+    """
+    pwd = os.environ.get("APP_PASSWORD")
+    if pwd:
+        return pwd.strip()
+    if os.path.exists(PASSWORD_FILE):
+        with open(PASSWORD_FILE, encoding="utf-8") as f:
+            return f.read().strip()
+    return None
+
+
+# Endpoints accessibles sans être connecté.
+PUBLIC_ENDPOINTS = {"login", "static"}
+
+
+@app.before_request
+def require_login():
+    """Protège toutes les pages : redirige vers la connexion si non authentifié."""
+    if request.endpoint in PUBLIC_ENDPOINTS:
+        return
+    if not session.get("authenticated"):
+        return redirect(url_for("login", next=request.path))
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if session.get("authenticated"):
+        return redirect(url_for("dashboard"))
+    if request.method == "POST":
+        expected = get_app_password()
+        provided = request.form.get("password", "")
+        if not expected:
+            flash("Aucun mot de passe n'est configuré sur le serveur.", "error")
+        elif hmac.compare_digest(provided, expected):
+            session.clear()
+            session["authenticated"] = True
+            session.permanent = True
+            nxt = request.args.get("next", "")
+            # N'autorise qu'une redirection vers un chemin interne.
+            if nxt.startswith("/") and not nxt.startswith("//"):
+                return redirect(nxt)
+            return redirect(url_for("dashboard"))
+        else:
+            flash("Mot de passe incorrect.", "error")
+    return render_template("login.html")
+
+
+@app.post("/logout")
+def logout():
+    session.clear()
+    flash("Vous êtes déconnecté.", "success")
+    return redirect(url_for("login"))
 
 # Initialise la base (schéma + seed) au chargement du module : fonctionne
 # aussi bien en local que sous le WSGI de PythonAnywhere.

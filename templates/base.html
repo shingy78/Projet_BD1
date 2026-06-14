@@ -20,6 +20,9 @@
       <a href="{{ url_for('relances_list') }}">Relances</a>
       <a href="{{ url_for('referentiels') }}">Référentiels</a>
       <a href="{{ url_for('parametres') }}">Paramètres</a>
+      <form method="post" action="{{ url_for('logout') }}" class="nav-logout">
+        <button type="submit">Déconnexion</button>
+      </form>
     </nav>
   </header>
 

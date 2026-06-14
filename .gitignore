@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 *.db
 .venv/
+
+# Secrets déposés sur le serveur — ne JAMAIS versionner
+app_password.txt
+.flask_secret

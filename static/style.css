@@ -55,6 +55,35 @@ body {
   border-bottom: 3px solid transparent;
 }
 .mainnav a:hover { color: #fff; border-bottom-color: var(--primary); }
+.nav-logout { display: inline; margin: 0; }
+.nav-logout button {
+  width: auto;
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+  cursor: pointer;
+  font: inherit;
+  font-size: .92rem;
+  padding: .9rem .7rem;
+  border-bottom: 3px solid transparent;
+}
+.nav-logout button:hover { color: #fff; border-bottom-color: #dc2626; }
+
+/* ---- Page de connexion ---- */
+.login-body {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 1rem;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+}
+.login-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  padding: 2rem;
+  width: 100%; max-width: 380px;
+}
+.login-card h1 { font-size: 1.4rem; margin: 0 0 .25rem; }
+.login-card .flash { margin-bottom: 1rem; }
 
 /* ---- Conteneur principal ---- */
 .container { max-width: 1100px; margin: 1.5rem auto; padding: 0 1.25rem; }
