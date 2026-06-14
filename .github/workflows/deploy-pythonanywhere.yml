@@ -48,7 +48,7 @@ jobs:
               .git/*|.github/*|.venv/*|__pycache__/*|node_modules/*) continue ;;
               *.pyc|.DS_Store) continue ;;
               app_password.txt|.flask_secret|*.db) continue ;;
-              Logo.png) continue ;;
+              Logo1.png) continue ;;
             esac
 
             remote_path="${TARGET_DIR}/${rel}"
