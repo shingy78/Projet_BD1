@@ -1,22 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ProfPilot">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Magistra">
   <defs>
-    <linearGradient id="pp-grad" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="m-grad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#3b82f6"/>
       <stop offset="1" stop-color="#0f172a"/>
     </linearGradient>
   </defs>
-  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#pp-grad)"/>
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#m-grad)"/>
+
   <!-- Chapeau de diplômé (mortier) -->
   <g fill="#ffffff">
-    <path d="M32 15 L57 25 L32 35 L7 25 Z"/>
-    <path d="M20 30 v7.5 c0 3.6 5.4 6.5 12 6.5 s12 -2.9 12 -6.5 V30 L32 35 Z"/>
+    <path d="M32 11 L56 20 L32 29 L8 20 Z"/>
+    <path d="M21 24.5 v6.5 c0 3.3 4.9 6 11 6 s11 -2.7 11 -6 v-6.5 L32 29 Z"/>
   </g>
-  <!-- Pompon (tassel) -->
-  <path d="M57 25 v12.5" stroke="#93c5fd" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <circle cx="57" cy="40" r="2.6" fill="#93c5fd"/>
-  <!-- Chevrons de code < > -->
-  <g stroke="#93c5fd" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M25 49.5 l-4.5 4 4.5 4"/>
-    <path d="M39 49.5 l4.5 4 -4.5 4"/>
+
+  <!-- Liaison synaptique : neurones reliés -->
+  <g stroke="#93c5fd" stroke-width="1.6" fill="none" stroke-linecap="round">
+    <path d="M19 47 L31 43 M31 43 L45 48 M31 43 L29 57 M19 47 L29 57 M45 48 L29 57 M45 48 L31 43"/>
+  </g>
+  <g fill="#bfdbfe">
+    <circle cx="31" cy="43" r="2.8"/>
+    <circle cx="19" cy="47" r="2.3"/>
+    <circle cx="45" cy="48" r="2.3"/>
+    <circle cx="29" cy="57" r="2.3"/>
   </g>
 </svg>
