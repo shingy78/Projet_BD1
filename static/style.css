@@ -49,7 +49,13 @@ body {
   align-items: center;
   gap: .55rem;
 }
-.brand-logo { height: 30px; width: 30px; display: block; }
+.brand-logo {
+  height: 34px; width: 34px; display: block;
+  background: #fff;            /* pastille claire pour rester lisible sur fond sombre */
+  border-radius: 8px;
+  padding: 2px;
+  object-fit: contain;
+}
 .mainnav { display: flex; flex-wrap: wrap; gap: .25rem; }
 .mainnav a {
   color: #cbd5e1;
