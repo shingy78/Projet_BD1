@@ -1,19 +1,4 @@
-------------------------------------------------------------------------------------------------------
-🎯Atelier “Testing as Code & API Monitoring”
-------------------------------------------------------------------------------------------------------
-Aujourd’hui, vous allez passer du rôle de développeur au rôle d’ingénieur qualité.  
-  
-Internet est rempli d’API publiques : météo, devises, citations, géolocalisation, données statistiques…
-Mais une API, ce n’est pas juste une URL qui répond. C’est un service.
-Et un service doit être fiable, mesurable et surveillé.  
-  
-Votre mission :  
-  
-👉 Choisir une API publique.  
-👉 Concevoir et implémenter une solution d’automatisation des tests.  
-👉 Déployer votre solution sur PythonAnywhere.  
-👉 Mesurer et exposer des indicateurs de qualité de service.    
-  
+
 -------------------------------------------------------------------------------------------------------
 🧩 Séquence 1 : GitHUB
 -------------------------------------------------------------------------------------------------------
@@ -51,16 +36,7 @@ Pour cet atelier, **vous avez 4 secrets à créer** dans votre Repository GitHUB
 **Dernière étape :** Pour engager l'automatisation de votre première Action, vous devez cliquer sur le gros boutton vert dans l'onglet supérieur [Actions] dans votre Repository Github. Le boutton s'intitule "I understand my workflows, go ahead and enable them". Ensuite procédez à une "petite" modification de votre fichier README.md GitHub puis faites un [Commit] pour déclancher l'action.   
 
 Notions acquises de cette séquence :  
-Vous avez vu dans cette séquence comment créer des secrets GiHUB afin de mettre en place de l'industrialisation continue.   
-  
----------------------------------------------------
-🔹 Séquence 4 : Atelier
----------------------------------------------------
-Objectif : Travailler sur l'automatisation de vos tests  
-Difficulté : Moyenne (~120 minutes)
----------------------------------------------------
-**Consignes : Retrouvez les consignes de votre atelier sur votre site pythonanywhere**    
-Vous pouvez retrouver le travail demandé dans le cadre de cet atelier directement sur votre site pythonanywhere (ex: monuser.pythonanywhere.com).    
+Vous avez vu dans cette séquence comment créer des secrets GiHUB afin de mettre en place de l'industrialisation continue.     
    
 --------------------------------------------------------------------
 🧠 Troubleshooting :
