@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ "Modifier" if contact else "Nouveau" }} contact{% endblock %}
+{% block heading %}{{ "Modifier le contact" if contact else "Nouveau contact" }}{% endblock %}
+
+{% block content %}
+<div class="card">
+<form class="stacked" method="post">
+  <div class="field">
+    <label>École</label>
+    <select name="ecole_id" required>
+      {% for e in ecoles %}
+        <option value="{{ e.id }}"
+          {% if contact and contact.ecole_id == e.id %}selected{% elif not contact and ecole_id == e.id %}selected{% endif %}>
+          {{ e.code_court }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Nom</label>
+      <input name="nom" required value="{{ contact.nom if contact else '' }}">
+    </div>
+    <div class="field">
+      <label>Prénom</label>
+      <input name="prenom" value="{{ contact.prenom or '' if contact else '' }}">
+    </div>
+  </div>
+  <div class="field">
+    <label>Fonction</label>
+    <input name="fonction" value="{{ contact.fonction or '' if contact else '' }}">
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Téléphone</label>
+      <input name="telephone" value="{{ contact.telephone or '' if contact else '' }}">
+    </div>
+    <div class="field">
+      <label>E-mail</label>
+      <input name="email" type="email" value="{{ contact.email or '' if contact else '' }}">
+    </div>
+  </div>
+  <div class="field field-check">
+    <input type="checkbox" name="decisionnaire" id="dec" {% if contact and contact.decisionnaire %}checked{% endif %}>
+    <label for="dec" style="margin:0">Décisionnaire (donneur d'ordre principal)</label>
+  </div>
+  <div class="form-buttons">
+    <button class="btn" type="submit">Enregistrer</button>
+    <a class="btn btn-ghost" href="{{ url_for('contacts_list') }}">Annuler</a>
+  </div>
+</form>
+</div>
+{% endblock %}

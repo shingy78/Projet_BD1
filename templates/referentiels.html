@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Référentiels{% endblock %}
+{% block heading %}Référentiels{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+  <div>
+    <h2>Niveaux</h2>
+    <div class="card">
+      <form method="post" action="{{ url_for('niveau_add') }}" style="display:flex; gap:.5rem; margin-bottom:1rem">
+        <input name="libelle" placeholder="ex. L3" required>
+        <button class="btn" type="submit">Ajouter</button>
+      </form>
+      <table>
+        <tbody>
+          {% for n in niveaux %}
+          <tr>
+            <td>{{ n.libelle }}</td>
+            <td class="right">
+              <form class="inline-form" method="post" action="{{ url_for('niveau_delete', nid=n.id) }}"
+                    onsubmit="return confirm('Supprimer ?');">
+                <button class="btn btn-sm btn-danger" type="submit">Suppr.</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}<tr><td class="muted">Aucun niveau.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <h2>Spécialités</h2>
+    <div class="card">
+      <form method="post" action="{{ url_for('specialite_add') }}" style="display:grid; gap:.5rem; margin-bottom:1rem">
+        <input name="code" placeholder="ex. CYBER ou CYBER+INFRA" required>
+        <input name="libelle" placeholder="Libellé (facultatif)">
+        <button class="btn" type="submit">Ajouter</button>
+        <span class="hint">Un code contenant « + » est marqué comme groupe-classe mutualisé.</span>
+      </form>
+      <table>
+        <tbody>
+          {% for s in specialites %}
+          <tr>
+            <td><strong>{{ s.code }}</strong> — {{ s.libelle }}
+              {% if s.mutualise %}<span class="badge blue">mutualisé</span>{% endif %}</td>
+            <td class="right">
+              <form class="inline-form" method="post" action="{{ url_for('specialite_delete', sid=s.id) }}"
+                    onsubmit="return confirm('Supprimer ?');">
+                <button class="btn btn-sm btn-danger" type="submit">Suppr.</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}<tr><td class="muted">Aucune spécialité.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

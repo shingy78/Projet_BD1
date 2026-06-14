@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Relances{% endblock %}
+{% block heading %}Relances{% endblock %}
+
+{% block content %}
+{% if relances %}
+<table class="data">
+  <thead>
+    <tr><th>Facture</th><th>École</th><th>Niveau</th><th>Prévue</th><th>Envoyée</th>
+        <th class="num">Reste dû</th><th>Statut</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for r in relances %}
+    <tr>
+      <td><a class="doc-numero" href="{{ url_for('facture_detail', fid=r.facture_id) }}">{{ r.numero }}</a></td>
+      <td><strong>{{ r.code_court }}</strong></td>
+      <td>{{ NIVEAUX_RELANCE[r.niveau] }}</td>
+      <td>{{ r.date_prevue or '—' }}</td>
+      <td>{{ r.date_envoi or '—' }}</td>
+      <td class="num">{{ "%.2f"|format(r.total - r.paye) }} €</td>
+      <td><span class="badge {{ 'green' if r.statut == 'envoyee' else 'amber' }}">{{ r.statut }}</span></td>
+      <td class="right">
+        {% if r.statut != 'envoyee' %}
+        <form class="inline-form" method="post" action="{{ url_for('relance_envoyee', rid=r.id) }}">
+          <button class="btn btn-sm btn-ghost" type="submit">Marquer envoyée</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="card empty">Aucune relance enregistrée. Les relances se créent depuis une facture.</div>
+{% endif %}
+{% endblock %}

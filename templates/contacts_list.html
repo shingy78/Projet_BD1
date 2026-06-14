@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Contacts{% endblock %}
+{% block heading %}Contacts{% endblock %}
+{% block actions %}<a class="btn" href="{{ url_for('contact_new') }}">+ Nouveau contact</a>{% endblock %}
+
+{% block content %}
+{% if contacts %}
+<table class="data">
+  <thead><tr><th>École</th><th>Nom</th><th>Fonction</th><th>Téléphone</th><th>E-mail</th><th>Décision.</th><th></th></tr></thead>
+  <tbody>
+    {% for c in contacts %}
+    <tr>
+      <td><strong>{{ c.code_court }}</strong></td>
+      <td>{{ c.prenom or '' }} {{ c.nom }}</td>
+      <td>{{ c.fonction or '—' }}</td>
+      <td>{{ c.telephone or '—' }}</td>
+      <td>{{ c.email or '—' }}</td>
+      <td>{% if c.decisionnaire %}<span class="badge green">Oui</span>{% endif %}</td>
+      <td>
+        <div class="row-actions">
+          <a class="btn btn-sm btn-ghost" href="{{ url_for('contact_edit', cid=c.id) }}">Modifier</a>
+          <form class="inline-form" method="post" action="{{ url_for('contact_delete', cid=c.id) }}"
+                onsubmit="return confirm('Supprimer ce contact ?');">
+            <button class="btn btn-sm btn-danger" type="submit">Suppr.</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="card empty">Aucun contact. <a href="{{ url_for('contact_new') }}">Ajoutez-en un</a>.</div>
+{% endif %}
+{% endblock %}

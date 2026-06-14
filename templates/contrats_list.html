@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Contrats{% endblock %}
+{% block heading %}Contrats{% endblock %}
+{% block actions %}<a class="btn" href="{{ url_for('contrat_new') }}">+ Nouveau contrat</a>{% endblock %}
+
+{% block content %}
+{% if contrats %}
+<table class="data">
+  <thead><tr><th>Année</th><th>École</th><th>Type</th><th>Référence</th><th>Statut</th><th class="num">Heures</th><th></th></tr></thead>
+  <tbody>
+    {% for c in contrats %}
+    <tr>
+      <td>{{ c.annee }}</td>
+      <td><strong>{{ c.code_court }}</strong></td>
+      <td>{{ c.type_contractualisation }}</td>
+      <td>{{ c.reference or '—' }}</td>
+      <td>
+        {% set cls = {'en_cours':'green','en_attente':'amber','termine':'gray','annule':'red'} %}
+        <span class="badge {{ cls.get(c.statut,'') }}">{{ c.statut }}</span>
+      </td>
+      <td class="num">{{ "%.1f"|format(c.heures) }} h</td>
+      <td class="right"><a class="btn btn-sm btn-ghost" href="{{ url_for('contrat_detail', cid=c.id) }}">Ouvrir</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="card empty">Aucun contrat. <a href="{{ url_for('contrat_new') }}">Créez-en un</a>.</div>
+{% endif %}
+{% endblock %}

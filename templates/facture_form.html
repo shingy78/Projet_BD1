@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Nouveau document{% endblock %}
+{% block heading %}Nouveau document financier{% endblock %}
+
+{% block content %}
+<div class="card">
+<form class="stacked" method="post">
+  <div class="grid-2">
+    <div class="field">
+      <label>Type de document</label>
+      <select name="type_doc" required>
+        <option value="D">Devis (série 1000)</option>
+        <option value="FP">Facture provisoire (série 8000)</option>
+      </select>
+      <span class="hint">La facture définitive (F) s'obtient en validant une facture provisoire.</span>
+    </div>
+    <div class="field">
+      <label>Année</label>
+      <input name="annee" type="number" required value="{{ annee_courante }}">
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>École</label>
+      <select name="ecole_id" required>
+        {% for e in ecoles %}<option value="{{ e.id }}">{{ e.code_court }} ({{ e.code_numerique }})</option>{% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Contact <span class="hint">(facultatif)</span></label>
+      <select name="contact_id">
+        <option value="">—</option>
+        {% for c in contacts %}<option value="{{ c.id }}">{{ c.prenom or '' }} {{ c.nom }}</option>{% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label>Contrat rattaché <span class="hint">(facultatif — permet de pré-remplir les lignes)</span></label>
+    <select name="contrat_id">
+      <option value="">—</option>
+      {% for c in contrats %}<option value="{{ c.id }}">{{ c.annee }} · {{ c.code_court }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label>Date d'émission</label>
+    <input name="date_emission" type="date">
+    <span class="hint">L'échéance est calculée automatiquement selon le délai des paramètres.</span>
+  </div>
+  <div class="field">
+    <label>Notes</label>
+    <textarea name="notes"></textarea>
+  </div>
+  <div class="form-buttons">
+    <button class="btn" type="submit">Créer (numérotation automatique)</button>
+    <a class="btn btn-ghost" href="{{ url_for('factures_list') }}">Annuler</a>
+  </div>
+</form>
+</div>
+{% endblock %}

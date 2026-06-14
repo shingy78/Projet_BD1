@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ "Modifier" if seance else "Nouvelle" }} séance{% endblock %}
+{% block heading %}{{ "Modifier la séance" if seance else "Nouvelle séance" }}{% endblock %}
+
+{% block content %}
+<div class="card">
+<form class="stacked" method="post">
+  <div class="field">
+    <label>Ligne de contrat (module rattaché)</label>
+    <select name="ligne_contrat_id" required>
+      {% for l in lignes %}
+        <option value="{{ l.id }}"
+          {% if seance and seance.ligne_contrat_id == l.id %}selected{% elif not seance and ligne_id == l.id %}selected{% endif %}>
+          {{ l.annee }} · {{ l.code_court }} · {{ l.code_module }} — {{ l.intitule }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Date de la séance</label>
+      <input name="date_seance" type="date" required value="{{ seance.date_seance if seance else '' }}">
+    </div>
+    <div class="field">
+      <label>Nombre d'heures</label>
+      <input name="nb_heures" type="number" step="0.5" required value="{{ seance.nb_heures if seance else '' }}">
+    </div>
+  </div>
+  <div class="field">
+    <label>Statut</label>
+    <select name="statut">
+      {% for s in ['planifiee','realisee','annulee'] %}
+        <option value="{{ s }}" {% if seance and seance.statut == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label>Notes</label>
+    <textarea name="notes">{{ seance.notes or '' if seance else '' }}</textarea>
+  </div>
+  <div class="form-buttons">
+    <button class="btn" type="submit">Enregistrer</button>
+    <a class="btn btn-ghost" href="{{ url_for('seances_list') }}">Annuler</a>
+  </div>
+</form>
+</div>
+{% endblock %}

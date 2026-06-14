@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Paramètres{% endblock %}
+{% block heading %}Paramètres — mentions légales{% endblock %}
+
+{% block content %}
+<div class="card">
+<form class="stacked" method="post">
+  <div class="field">
+    <label>Raison sociale</label>
+    <input name="raison_sociale" value="{{ params.raison_sociale or '' if params else '' }}">
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>SIRET</label>
+      <input name="siret" value="{{ params.siret or '' if params else '' }}">
+    </div>
+    <div class="field">
+      <label>Délai de paiement (jours)</label>
+      <input name="delai_paiement" type="number" value="{{ params.delai_paiement or 30 if params else 30 }}">
+    </div>
+  </div>
+  <div class="field">
+    <label>Adresse</label>
+    <input name="adresse" value="{{ params.adresse or '' if params else '' }}">
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Code postal</label>
+      <input name="code_postal" value="{{ params.code_postal or '' if params else '' }}">
+    </div>
+    <div class="field">
+      <label>Ville</label>
+      <input name="ville" value="{{ params.ville or '' if params else '' }}">
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Téléphone</label>
+      <input name="telephone" value="{{ params.telephone or '' if params else '' }}">
+    </div>
+    <div class="field">
+      <label>E-mail</label>
+      <input name="email" type="email" value="{{ params.email or '' if params else '' }}">
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>IBAN</label>
+      <input name="iban" value="{{ params.iban or '' if params else '' }}">
+    </div>
+    <div class="field">
+      <label>BIC</label>
+      <input name="bic" value="{{ params.bic or '' if params else '' }}">
+    </div>
+  </div>
+  <div class="field">
+    <label>Mention TVA</label>
+    <input name="mention_tva" value="{{ params.mention_tva or '' if params else '' }}">
+  </div>
+  <div class="field">
+    <label>Pénalités de retard</label>
+    <textarea name="penalites">{{ params.penalites or '' if params else '' }}</textarea>
+  </div>
+  <div class="form-buttons">
+    <button class="btn" type="submit">Enregistrer</button>
+  </div>
+</form>
+</div>
+{% endblock %}

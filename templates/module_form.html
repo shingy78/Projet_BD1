@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ "Modifier" if module else "Nouveau" }} module{% endblock %}
+{% block heading %}{{ "Modifier le module" if module else "Nouveau module" }}{% endblock %}
+
+{% block content %}
+<div class="card">
+<form class="stacked" method="post">
+  <div class="grid-2">
+    <div class="field">
+      <label>Code module</label>
+      <input name="code_module" required value="{{ module.code_module if module else '' }}">
+    </div>
+    <div class="field">
+      <label>Intitulé</label>
+      <input name="intitule" required value="{{ module.intitule if module else '' }}">
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Niveau <span class="hint">(facultatif)</span></label>
+      <select name="niveau_id">
+        <option value="">— aucun —</option>
+        {% for n in niveaux %}
+          <option value="{{ n.id }}" {% if module and module.niveau_id == n.id %}selected{% endif %}>{{ n.libelle }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Spécialité <span class="hint">(facultatif)</span></label>
+      <select name="specialite_id">
+        <option value="">— aucune —</option>
+        {% for s in specialites %}
+          <option value="{{ s.id }}" {% if module and module.specialite_id == s.id %}selected{% endif %}>{{ s.code }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Volume horaire de référence</label>
+      <input name="volume_horaire_ref" type="number" step="0.5" value="{{ module.volume_horaire_ref or '' if module else '' }}">
+    </div>
+    <div class="field">
+      <label>Tarif horaire indicatif (€)</label>
+      <input name="tarif_horaire_ref" type="number" step="0.01" value="{{ module.tarif_horaire_ref or '' if module else '' }}">
+    </div>
+  </div>
+  <div class="form-buttons">
+    <button class="btn" type="submit">Enregistrer</button>
+    <a class="btn btn-ghost" href="{{ url_for('modules_list') }}">Annuler</a>
+  </div>
+</form>
+</div>
+{% endblock %}

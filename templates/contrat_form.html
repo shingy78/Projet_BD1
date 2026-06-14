@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ "Modifier" if contrat else "Nouveau" }} contrat{% endblock %}
+{% block heading %}{{ "Modifier le contrat" if contrat else "Nouveau contrat" }}{% endblock %}
+
+{% block content %}
+<div class="card">
+<form class="stacked" method="post">
+  <div class="grid-2">
+    <div class="field">
+      <label>École</label>
+      <select name="ecole_id" required>
+        {% for e in ecoles %}
+          <option value="{{ e.id }}" {% if contrat and contrat.ecole_id == e.id %}selected{% endif %}>{{ e.code_court }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Année</label>
+      <input name="annee" type="number" required value="{{ contrat.annee if contrat else annee_courante }}">
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Type de contractualisation</label>
+      <select name="type_contractualisation">
+        {% for t in ['contrat','bon_de_commande','devis','autre'] %}
+          <option value="{{ t }}" {% if contrat and contrat.type_contractualisation == t %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Statut</label>
+      <select name="statut">
+        {% for s in ['en_cours','en_attente','termine','annule'] %}
+          <option value="{{ s }}" {% if contrat and contrat.statut == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Référence</label>
+      <input name="reference" value="{{ contrat.reference or '' if contrat else '' }}">
+    </div>
+    <div class="field">
+      <label>Date de création</label>
+      <input name="date_creation" type="date" value="{{ contrat.date_creation or '' if contrat else '' }}">
+    </div>
+  </div>
+  <div class="field">
+    <label>Notes</label>
+    <textarea name="notes">{{ contrat.notes or '' if contrat else '' }}</textarea>
+  </div>
+  <div class="form-buttons">
+    <button class="btn" type="submit">Enregistrer</button>
+    <a class="btn btn-ghost" href="{{ url_for('contrats_list') }}">Annuler</a>
+  </div>
+</form>
+</div>
+{% endblock %}

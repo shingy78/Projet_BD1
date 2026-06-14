@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Modules{% endblock %}
+{% block heading %}Catalogue des modules{% endblock %}
+{% block actions %}<a class="btn" href="{{ url_for('module_new') }}">+ Nouveau module</a>{% endblock %}
+
+{% block content %}
+{% if modules %}
+<table class="data">
+  <thead><tr><th>Code</th><th>Intitulé</th><th>Niveau</th><th>Spécialité</th><th class="num">Vol. réf.</th><th class="num">Tarif réf.</th><th></th></tr></thead>
+  <tbody>
+    {% for m in modules %}
+    <tr>
+      <td><strong>{{ m.code_module }}</strong></td>
+      <td>{{ m.intitule }}</td>
+      <td>{{ m.niveau or '—' }}</td>
+      <td>{{ m.specialite or '—' }}</td>
+      <td class="num">{{ "%.1f"|format(m.volume_horaire_ref or 0) }} h</td>
+      <td class="num">{{ "%.2f"|format(m.tarif_horaire_ref or 0) }} €</td>
+      <td>
+        <div class="row-actions">
+          <a class="btn btn-sm btn-ghost" href="{{ url_for('module_edit', mid=m.id) }}">Modifier</a>
+          <form class="inline-form" method="post" action="{{ url_for('module_delete', mid=m.id) }}"
+                onsubmit="return confirm('Supprimer ce module ?');">
+            <button class="btn btn-sm btn-danger" type="submit">Suppr.</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="card empty">Aucun module. <a href="{{ url_for('module_new') }}">Ajoutez-en un</a>.</div>
+{% endif %}
+{% endblock %}

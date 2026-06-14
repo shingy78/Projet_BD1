@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ "Modifier" if ecole else "Nouvelle" }} école{% endblock %}
+{% block heading %}{{ "Modifier l'école " + ecole.code_court if ecole else "Nouvelle école" }}{% endblock %}
+
+{% block content %}
+<div class="card">
+<form class="stacked" method="post">
+  <div class="grid-2">
+    <div class="field">
+      <label>Code court <span class="hint">(ex. ISEP)</span></label>
+      <input name="code_court" required value="{{ ecole.code_court if ecole else '' }}">
+    </div>
+    <div class="field">
+      <label>Code numérique <span class="hint">(figure dans les n° de documents)</span></label>
+      <input name="code_numerique" type="number" required value="{{ ecole.code_numerique if ecole else '' }}">
+    </div>
+  </div>
+  <div class="field">
+    <label>Adresse</label>
+    <input name="adresse" value="{{ ecole.adresse or '' if ecole else '' }}">
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Code postal</label>
+      <input name="code_postal" value="{{ ecole.code_postal or '' if ecole else '' }}">
+    </div>
+    <div class="field">
+      <label>Ville</label>
+      <input name="ville" value="{{ ecole.ville or '' if ecole else '' }}">
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Téléphone</label>
+      <input name="telephone" value="{{ ecole.telephone or '' if ecole else '' }}">
+    </div>
+    <div class="field">
+      <label>E-mail</label>
+      <input name="email" type="email" value="{{ ecole.email or '' if ecole else '' }}">
+    </div>
+  </div>
+  <div class="field">
+    <label>Site web</label>
+    <input name="site_web" value="{{ ecole.site_web or '' if ecole else '' }}">
+  </div>
+  <div class="field">
+    <label>Notes</label>
+    <textarea name="notes">{{ ecole.notes or '' if ecole else '' }}</textarea>
+  </div>
+  <div class="form-buttons">
+    <button class="btn" type="submit">Enregistrer</button>
+    <a class="btn btn-ghost" href="{{ url_for('ecoles_list') }}">Annuler</a>
+  </div>
+</form>
+</div>
+{% endblock %}

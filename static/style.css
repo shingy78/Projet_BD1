@@ -1,0 +1,185 @@
+/* =============================================================================
+   Feuille de style — Gestion d'activité freelance
+   Design sobre, sans dépendance externe (servie en local).
+   ========================================================================== */
+
+:root {
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --border: #e5e7eb;
+  --success-bg: #ecfdf5; --success-ink: #065f46;
+  --error-bg: #fef2f2;   --error-ink: #991b1b;
+  --warn: #b45309;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* ---- Barre de navigation ---- */
+.topbar {
+  background: #0f172a;
+  color: #fff;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fff;
+  text-decoration: none;
+  padding: .9rem 0;
+  white-space: nowrap;
+}
+.mainnav { display: flex; flex-wrap: wrap; gap: .25rem; }
+.mainnav a {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: .9rem .7rem;
+  font-size: .92rem;
+  border-bottom: 3px solid transparent;
+}
+.mainnav a:hover { color: #fff; border-bottom-color: var(--primary); }
+
+/* ---- Conteneur principal ---- */
+.container { max-width: 1100px; margin: 1.5rem auto; padding: 0 1.25rem; }
+
+.page-head {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem;
+}
+.page-head h1 { font-size: 1.5rem; margin: 0; }
+.page-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+h2 { font-size: 1.15rem; margin: 1.75rem 0 .75rem; }
+
+/* ---- Messages flash ---- */
+.flashes { margin-bottom: 1rem; display: grid; gap: .5rem; }
+.flash { padding: .7rem 1rem; border-radius: var(--radius); font-size: .95rem; }
+.flash-success { background: var(--success-bg); color: var(--success-ink); }
+.flash-error   { background: var(--error-bg);   color: var(--error-ink); }
+
+/* ---- Cartes ---- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ---- Cartes d'indicateurs (dashboard) ---- */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--shadow);
+}
+.kpi .label { color: var(--muted); font-size: .85rem; text-transform: uppercase; letter-spacing: .03em; }
+.kpi .value { font-size: 1.7rem; font-weight: 700; margin-top: .35rem; }
+.kpi.alert { border-left-color: #dc2626; }
+.kpi.warn  { border-left-color: var(--warn); }
+.kpi.ok    { border-left-color: #059669; }
+
+/* ---- Tableaux ---- */
+table { width: 100%; border-collapse: collapse; background: var(--surface); }
+.card table { box-shadow: none; }
+table.data {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+th, td { padding: .65rem .8rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: #f8fafc; font-size: .82rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+tbody tr:hover { background: #f8fafc; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.empty { color: var(--muted); padding: 1.5rem; text-align: center; }
+
+/* ---- Boutons ---- */
+.btn {
+  display: inline-block;
+  padding: .5rem .9rem;
+  border-radius: 8px;
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #fff;
+  font-size: .9rem;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+.btn-ghost { background: #fff; color: var(--primary); }
+.btn-ghost:hover { background: #eff6ff; }
+.btn-sm { padding: .3rem .6rem; font-size: .82rem; }
+.btn-danger { background: #dc2626; border-color: #dc2626; }
+.btn-danger:hover { background: #b91c1c; border-color: #b91c1c; }
+.btn-neutral { background: #475569; border-color: #475569; }
+.btn-neutral:hover { background: #334155; }
+
+.inline-form { display: inline; }
+.row-actions { display: flex; gap: .35rem; justify-content: flex-end; flex-wrap: wrap; }
+
+/* ---- Formulaires ---- */
+form.stacked { max-width: 640px; }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: .3rem; }
+.field .hint { color: var(--muted); font-size: .82rem; font-weight: 400; }
+input, select, textarea {
+  width: 100%;
+  padding: .55rem .65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: .95rem;
+  font-family: inherit;
+  background: #fff;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+textarea { min-height: 80px; resize: vertical; }
+.field-check { display: flex; align-items: center; gap: .5rem; }
+.field-check input { width: auto; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+.form-buttons { display: flex; gap: .5rem; margin-top: 1rem; }
+
+/* ---- Badges de statut ---- */
+.badge {
+  display: inline-block; padding: .15rem .55rem; border-radius: 999px;
+  font-size: .78rem; font-weight: 600; background: #e2e8f0; color: #334155;
+}
+.badge.green  { background: #dcfce7; color: #166534; }
+.badge.red    { background: #fee2e2; color: #991b1b; }
+.badge.amber  { background: #fef3c7; color: #92400e; }
+.badge.blue   { background: #dbeafe; color: #1e40af; }
+.badge.gray   { background: #e5e7eb; color: #4b5563; }
+
+/* ---- Divers ---- */
+.muted { color: var(--muted); }
+.right { text-align: right; }
+.totaux { margin-top: 1rem; font-size: 1.05rem; }
+.totaux .reste { font-weight: 700; }
+.legal { font-size: .82rem; color: var(--muted); border-top: 1px dashed var(--border); margin-top: 1rem; padding-top: 1rem; }
+.footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 2rem 1rem; }
+.doc-numero { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-weight: 700; }

@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %}{{ facture.numero }}{% endblock %}
+{% block heading %}<span class="doc-numero">{{ facture.numero }}</span>{% endblock %}
+{% block actions %}
+  {% if facture.type_doc == 'FP' and facture.statut != 'annulee' %}
+    <form class="inline-form" method="post" action="{{ url_for('facture_valider', fid=facture.id) }}"
+          onsubmit="return confirm('Valider définitivement cette facture ? Opération irréversible.');">
+      <button class="btn" type="submit">Valider en facture définitive</button>
+    </form>
+  {% endif %}
+  {% if facture.statut != 'annulee' %}
+    <form class="inline-form" method="post" action="{{ url_for('facture_annuler', fid=facture.id) }}"
+          onsubmit="return confirm('Annuler ce document ?');">
+      <button class="btn btn-neutral" type="submit">Annuler le document</button>
+    </form>
+  {% endif %}
+  <form class="inline-form" method="post" action="{{ url_for('facture_delete', fid=facture.id) }}"
+        onsubmit="return confirm('Supprimer définitivement ?');">
+    <button class="btn btn-danger" type="submit">Supprimer</button>
+  </form>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="grid-2">
+    <div>
+      <p><strong>{{ TYPES_DOC[facture.type_doc] }}</strong> — {{ facture.code_court }}<br>
+      Émis le {{ facture.date_emission or '—' }} · Échéance {{ facture.date_echeance or '—' }}</p>
+      {% if facture.date_validation %}<p class="muted">Validée le {{ facture.date_validation }} (définitive).</p>{% endif %}
+      {% if contact %}<p>À l'attention de {{ contact.prenom or '' }} {{ contact.nom }}{% if contact.fonction %}, {{ contact.fonction }}{% endif %}</p>{% endif %}
+    </div>
+    <div class="right">
+      {% if parametres %}
+      <p class="muted">
+        <strong>{{ parametres.raison_sociale or '' }}</strong><br>
+        {% if parametres.siret %}SIRET {{ parametres.siret }}<br>{% endif %}
+        {{ parametres.adresse or '' }} {{ parametres.code_postal or '' }} {{ parametres.ville or '' }}
+      </p>
+      {% endif %}
+    </div>
+  </div>
+  {% if facture.notes %}<p class="muted">{{ facture.notes }}</p>{% endif %}
+</div>
+
+<h2>Lignes</h2>
+{% if lignes %}
+<table class="data">
+  <thead><tr><th>Description</th><th class="num">Heures</th><th class="num">P.U.</th><th class="num">Montant</th><th></th></tr></thead>
+  <tbody>
+    {% for l in lignes %}
+    <tr>
+      <td>{{ l.description }}</td>
+      <td class="num">{{ "%.1f"|format(l.quantite_heures) }}</td>
+      <td class="num">{{ "%.2f"|format(l.prix_unitaire) }} €</td>
+      <td class="num">{{ "%.2f"|format(l.montant) }} €</td>
+      <td class="right">
+        <form class="inline-form" method="post" action="{{ url_for('ligne_facture_delete', lid=l.id) }}">
+          <button class="btn btn-sm btn-danger" type="submit">Suppr.</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}<div class="card empty">Aucune ligne.</div>{% endif %}
+
+<div class="card totaux right">
+  <div>Total : <strong>{{ "%.2f"|format(total) }} €</strong></div>
+  {% if facture.type_doc != 'D' %}
+    <div>Payé : {{ "%.2f"|format(paye) }} €</div>
+    <div class="reste">Reste dû : {{ "%.2f"|format(reste) }} €</div>
+  {% endif %}
+  {% if parametres and parametres.mention_tva %}
+    <div class="legal">{{ parametres.mention_tva }}</div>
+  {% endif %}
+</div>
+
+<h2>Ajouter une ligne</h2>
+<div class="card">
+<form method="post" action="{{ url_for('ligne_facture_add', fid=facture.id) }}">
+  {% if lignes_contrat %}
+  <div class="field">
+    <label>Pré-remplir depuis une ligne de contrat <span class="hint">(facultatif)</span></label>
+    <select name="ligne_contrat_id" id="lc-select">
+      <option value="">— saisie libre —</option>
+      {% for lc in lignes_contrat %}
+        <option value="{{ lc.id }}" data-desc="{{ lc.code_module }} — {{ lc.intitule }}"
+                data-pu="{{ lc.tarif_horaire }}" data-h="{{ lc.volume_horaire }}">
+          {{ lc.code_module }} — {{ lc.intitule }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+  <div class="field">
+    <label>Description</label>
+    <input name="description" id="lf-desc" required>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Quantité d'heures</label>
+      <input name="quantite_heures" id="lf-h" type="number" step="0.5" value="0">
+    </div>
+    <div class="field">
+      <label>Prix unitaire (€)</label>
+      <input name="prix_unitaire" id="lf-pu" type="number" step="0.01" value="0">
+    </div>
+  </div>
+  <button class="btn" type="submit">Ajouter la ligne</button>
+</form>
+</div>
+
+{% if facture.type_doc != 'D' %}
+<h2>Paiements</h2>
+{% if paiements %}
+<table class="data">
+  <thead><tr><th>Date</th><th class="num">Montant</th><th>Mode</th><th>Référence</th><th></th></tr></thead>
+  <tbody>
+    {% for p in paiements %}
+    <tr>
+      <td>{{ p.date_paiement }}</td>
+      <td class="num">{{ "%.2f"|format(p.montant) }} €</td>
+      <td>{{ p.mode }}</td>
+      <td>{{ p.reference or '—' }}</td>
+      <td class="right">
+        <form class="inline-form" method="post" action="{{ url_for('paiement_delete', pid=p.id) }}">
+          <button class="btn btn-sm btn-danger" type="submit">Suppr.</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}<div class="card empty">Aucun paiement enregistré.</div>{% endif %}
+
+<div class="card">
+<form method="post" action="{{ url_for('paiement_add', fid=facture.id) }}">
+  <div class="grid-2">
+    <div class="field"><label>Date</label><input name="date_paiement" type="date" required></div>
+    <div class="field"><label>Montant (€)</label><input name="montant" type="number" step="0.01" required></div>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Mode</label>
+      <select name="mode">
+        {% for m in ['virement','cheque','prelevement','autre'] %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="field"><label>Référence</label><input name="reference"></div>
+  </div>
+  <button class="btn" type="submit">Enregistrer le paiement</button>
+</form>
+</div>
+
+<h2>Relances</h2>
+{% if relances %}
+<table class="data">
+  <thead><tr><th>Niveau</th><th>Prévue</th><th>Envoyée</th><th>Statut</th><th></th></tr></thead>
+  <tbody>
+    {% for r in relances %}
+    <tr>
+      <td>{{ NIVEAUX_RELANCE[r.niveau] }}</td>
+      <td>{{ r.date_prevue or '—' }}</td>
+      <td>{{ r.date_envoi or '—' }}</td>
+      <td><span class="badge {{ 'green' if r.statut == 'envoyee' else 'amber' }}">{{ r.statut }}</span></td>
+      <td class="right">
+        <div class="row-actions">
+          {% if r.statut != 'envoyee' %}
+          <form class="inline-form" method="post" action="{{ url_for('relance_envoyee', rid=r.id) }}">
+            <button class="btn btn-sm btn-ghost" type="submit">Marquer envoyée</button>
+          </form>
+          {% endif %}
+          <form class="inline-form" method="post" action="{{ url_for('relance_delete', rid=r.id) }}">
+            <button class="btn btn-sm btn-danger" type="submit">Suppr.</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}<div class="card empty">Aucune relance.</div>{% endif %}
+
+<div class="card">
+<form method="post" action="{{ url_for('relance_add', fid=facture.id) }}">
+  <div class="grid-2">
+    <div class="field">
+      <label>Niveau de relance</label>
+      <select name="niveau">
+        {% for n, lib in NIVEAUX_RELANCE.items() %}<option value="{{ n }}">{{ n }} — {{ lib }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="field"><label>Date prévue</label><input name="date_prevue" type="date"></div>
+  </div>
+  <div class="field"><label>Date d'envoi <span class="hint">(si déjà envoyée)</span></label><input name="date_envoi" type="date"></div>
+  <button class="btn" type="submit">Enregistrer la relance</button>
+</form>
+</div>
+{% endif %}
+
+<script>
+  // Pré-remplissage d'une ligne de facture depuis une ligne de contrat
+  var lc = document.getElementById('lc-select');
+  if (lc) {
+    lc.addEventListener('change', function () {
+      var o = this.options[this.selectedIndex];
+      if (!o.value) return;
+      document.getElementById('lf-desc').value = o.dataset.desc || '';
+      document.getElementById('lf-pu').value = o.dataset.pu || 0;
+      document.getElementById('lf-h').value = o.dataset.h || 0;
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Écoles{% endblock %}
+{% block heading %}Écoles partenaires{% endblock %}
+{% block actions %}<a class="btn" href="{{ url_for('ecole_new') }}">+ Nouvelle école</a>{% endblock %}
+
+{% block content %}
+{% if ecoles %}
+<table class="data">
+  <thead>
+    <tr><th>Code</th><th class="num">Code num.</th><th>Ville</th><th>Téléphone</th><th>E-mail</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for e in ecoles %}
+    <tr>
+      <td><a href="{{ url_for('ecole_detail', eid=e.id) }}"><strong>{{ e.code_court }}</strong></a></td>
+      <td class="num">{{ e.code_numerique }}</td>
+      <td>{{ e.ville or "—" }}</td>
+      <td>{{ e.telephone or "—" }}</td>
+      <td>{{ e.email or "—" }}</td>
+      <td>
+        <div class="row-actions">
+          <a class="btn btn-sm btn-ghost" href="{{ url_for('ecole_edit', eid=e.id) }}">Modifier</a>
+          <form class="inline-form" method="post" action="{{ url_for('ecole_delete', eid=e.id) }}"
+                onsubmit="return confirm('Supprimer {{ e.code_court }} et ses contacts/contrats liés ?');">
+            <button class="btn btn-sm btn-danger" type="submit">Suppr.</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="card empty">Aucune école. <a href="{{ url_for('ecole_new') }}">Ajoutez-en une</a>.</div>
+{% endif %}
+{% endblock %}

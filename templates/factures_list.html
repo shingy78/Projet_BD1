@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Documents financiers{% endblock %}
+{% block heading %}Documents financiers{% endblock %}
+{% block actions %}<a class="btn" href="{{ url_for('facture_new') }}">+ Nouveau document</a>{% endblock %}
+
+{% block content %}
+{% if factures %}
+<table class="data">
+  <thead>
+    <tr><th>Numéro</th><th>Type</th><th>École</th><th>Émission</th><th>Échéance</th>
+        <th class="num">Total</th><th class="num">Reste dû</th><th>Statut</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for f in factures %}
+    {% set reste = f.total - f.paye %}
+    <tr>
+      <td><a class="doc-numero" href="{{ url_for('facture_detail', fid=f.id) }}">{{ f.numero }}</a></td>
+      <td>
+        {% set tcls = {'D':'gray','FP':'amber','F':'blue'} %}
+        <span class="badge {{ tcls.get(f.type_doc,'') }}">{{ TYPES_DOC[f.type_doc] }}</span>
+      </td>
+      <td><strong>{{ f.code_court }}</strong></td>
+      <td>{{ f.date_emission or '—' }}</td>
+      <td>{{ f.date_echeance or '—' }}</td>
+      <td class="num">{{ "%.2f"|format(f.total) }} €</td>
+      <td class="num">{{ "%.2f"|format(reste) }} €</td>
+      <td>
+        {% if f.statut == 'annulee' %}<span class="badge red">annulée</span>
+        {% elif f.type_doc == 'D' %}<span class="badge gray">devis</span>
+        {% elif reste <= 0.001 %}<span class="badge green">payée</span>
+        {% else %}<span class="badge amber">émise</span>{% endif %}
+      </td>
+      <td class="right"><a class="btn btn-sm btn-ghost" href="{{ url_for('facture_detail', fid=f.id) }}">Ouvrir</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="card empty">Aucun document. <a href="{{ url_for('facture_new') }}">Créez un devis ou une facture</a>.</div>
+{% endif %}
+{% endblock %}

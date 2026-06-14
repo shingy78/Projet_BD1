@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Contrat {{ contrat.code_court }} {{ contrat.annee }}{% endblock %}
+{% block heading %}Contrat {{ contrat.code_court }} — {{ contrat.annee }}{% endblock %}
+{% block actions %}
+  <a class="btn btn-ghost" href="{{ url_for('contrat_edit', cid=contrat.id) }}">Modifier</a>
+  <form class="inline-form" method="post" action="{{ url_for('contrat_delete', cid=contrat.id) }}"
+        onsubmit="return confirm('Supprimer ce contrat et ses lignes ?');">
+    <button class="btn btn-danger" type="submit">Supprimer</button>
+  </form>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <p>
+    <strong>Type :</strong> {{ contrat.type_contractualisation }} &nbsp;|&nbsp;
+    <strong>Référence :</strong> {{ contrat.reference or '—' }} &nbsp;|&nbsp;
+    <strong>Statut :</strong> <span class="badge">{{ contrat.statut }}</span>
+  </p>
+  {% if contrat.notes %}<p class="muted">{{ contrat.notes }}</p>{% endif %}
+</div>
+
+<h2>Lignes du contrat</h2>
+{% if lignes %}
+<table class="data">
+  <thead>
+    <tr><th>Module</th><th>Type cours</th><th class="num">Heures</th><th class="num">Tarif</th>
+        <th class="num">Réalisé</th><th class="num">Reste</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for l in lignes %}
+    <tr>
+      <td><strong>{{ l.code_module }}</strong> — {{ l.intitule }}</td>
+      <td><span class="badge {{ 'blue' if l.type_cours == 'Commun' else 'gray' }}">{{ l.type_cours }}</span></td>
+      <td class="num">{{ "%.1f"|format(l.volume_horaire) }} h</td>
+      <td class="num">{{ "%.2f"|format(l.tarif_horaire) }} €</td>
+      <td class="num">{{ "%.1f"|format(l.heures_faites) }} h</td>
+      <td class="num">{{ "%.1f"|format(l.volume_horaire - l.heures_faites) }} h</td>
+      <td>
+        <div class="row-actions">
+          <a class="btn btn-sm btn-ghost" href="{{ url_for('seance_new', ligne_id=l.id) }}">+ Séance</a>
+          <form class="inline-form" method="post" action="{{ url_for('ligne_contrat_delete', lid=l.id) }}"
+                onsubmit="return confirm('Supprimer cette ligne ?');">
+            <button class="btn btn-sm btn-danger" type="submit">Suppr.</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="card empty">Aucune ligne. Ajoutez le premier module ci-dessous.</div>
+{% endif %}
+
+<h2>Ajouter une ligne</h2>
+<div class="card">
+<form method="post" action="{{ url_for('ligne_contrat_add', cid=contrat.id) }}">
+  <div class="grid-2">
+    <div class="field">
+      <label>Module</label>
+      <select name="module_id" required>
+        {% for m in modules %}
+          <option value="{{ m.id }}" data-tarif="{{ m.tarif_horaire_ref or 0 }}" data-vol="{{ m.volume_horaire_ref or 0 }}">
+            {{ m.code_module }} — {{ m.intitule }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Type de cours</label>
+      <select name="type_cours">
+        <option value="Specialite">Spécialité</option>
+        <option value="Commun">Commun</option>
+      </select>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Volume horaire engagé</label>
+      <input name="volume_horaire" type="number" step="0.5" value="0">
+    </div>
+    <div class="field">
+      <label>Tarif horaire négocié (€)</label>
+      <input name="tarif_horaire" type="number" step="0.01" value="0">
+    </div>
+  </div>
+  <button class="btn" type="submit">Ajouter la ligne</button>
+</form>
+</div>
+{% endblock %}

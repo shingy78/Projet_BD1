@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord{% endblock %}
+{% block heading %}Tableau de bord {{ annee_courante }}{% endblock %}
+
+{% block content %}
+<div class="kpis">
+  <div class="kpi {{ 'alert' if encours > 0 else 'ok' }}">
+    <div class="label">Encours de facturation</div>
+    <div class="value">{{ "%.2f"|format(encours) }} €</div>
+  </div>
+  <div class="kpi {{ 'alert' if en_retard else 'ok' }}">
+    <div class="label">Factures en retard</div>
+    <div class="value">{{ en_retard|length }}</div>
+  </div>
+  <div class="kpi {{ 'warn' if heures_restantes > 0 else 'ok' }}">
+    <div class="label">Heures restant à dispenser</div>
+    <div class="value">{{ "%.1f"|format(heures_restantes) }} h</div>
+    <div class="muted" style="font-size:.8rem">{{ "%.1f"|format(heures_faites) }} / {{ "%.1f"|format(heures_contract) }} h réalisées</div>
+  </div>
+  <div class="kpi">
+    <div class="label">Devis en attente</div>
+    <div class="value">{{ devis_attente }}</div>
+  </div>
+  <div class="kpi ok">
+    <div class="label">CA encaissé {{ annee_courante }}</div>
+    <div class="value">{{ "%.2f"|format(ca_encaisse) }} €</div>
+  </div>
+</div>
+
+<h2>Factures en retard</h2>
+{% if en_retard %}
+<table class="data">
+  <thead><tr><th>Numéro</th><th>École</th><th>Échéance</th><th class="num">Reste dû</th><th></th></tr></thead>
+  <tbody>
+    {% for f in en_retard %}
+    <tr>
+      <td><a href="{{ url_for('facture_detail', fid=f.id) }}" class="doc-numero">{{ f.numero }}</a></td>
+      <td>{{ f.code_court }}</td>
+      <td><span class="badge red">{{ f.date_echeance }}</span></td>
+      <td class="num">{{ "%.2f"|format(f.total - f.paye) }} €</td>
+      <td class="right"><a class="btn btn-sm btn-ghost" href="{{ url_for('facture_detail', fid=f.id) }}">Ouvrir</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="card empty">Aucune facture en retard 🎉</div>
+{% endif %}
+{% endblock %}

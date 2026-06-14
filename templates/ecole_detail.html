@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ ecole.code_court }}{% endblock %}
+{% block heading %}{{ ecole.code_court }} <span class="muted">({{ ecole.code_numerique }})</span>{% endblock %}
+{% block actions %}
+  <a class="btn btn-ghost" href="{{ url_for('ecole_edit', eid=ecole.id) }}">Modifier</a>
+  <a class="btn" href="{{ url_for('contact_new', ecole_id=ecole.id) }}">+ Contact</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <p>
+    {{ ecole.adresse or '' }}{% if ecole.adresse %}, {% endif %}{{ ecole.code_postal or '' }} {{ ecole.ville or '' }}<br>
+    {% if ecole.telephone %}☎ {{ ecole.telephone }} &nbsp;{% endif %}
+    {% if ecole.email %}✉ {{ ecole.email }} &nbsp;{% endif %}
+    {% if ecole.site_web %}🔗 {{ ecole.site_web }}{% endif %}
+  </p>
+  {% if ecole.notes %}<p class="muted">{{ ecole.notes }}</p>{% endif %}
+</div>
+
+<h2>Contacts</h2>
+{% if contacts %}
+<table class="data">
+  <thead><tr><th>Nom</th><th>Fonction</th><th>Téléphone</th><th>E-mail</th><th>Décisionnaire</th></tr></thead>
+  <tbody>
+    {% for c in contacts %}
+    <tr>
+      <td>{{ c.prenom or '' }} {{ c.nom }}</td>
+      <td>{{ c.fonction or '—' }}</td>
+      <td>{{ c.telephone or '—' }}</td>
+      <td>{{ c.email or '—' }}</td>
+      <td>{% if c.decisionnaire %}<span class="badge green">Oui</span>{% else %}<span class="badge gray">—</span>{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}<div class="card empty">Aucun contact.</div>{% endif %}
+
+<h2>Contrats</h2>
+{% if contrats %}
+<table class="data">
+  <thead><tr><th>Année</th><th>Type</th><th>Référence</th><th>Statut</th><th></th></tr></thead>
+  <tbody>
+    {% for c in contrats %}
+    <tr>
+      <td>{{ c.annee }}</td>
+      <td>{{ c.type_contractualisation }}</td>
+      <td>{{ c.reference or '—' }}</td>
+      <td><span class="badge">{{ c.statut }}</span></td>
+      <td class="right"><a class="btn btn-sm btn-ghost" href="{{ url_for('contrat_detail', cid=c.id) }}">Ouvrir</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}<div class="card empty">Aucun contrat.</div>{% endif %}
+{% endblock %}
